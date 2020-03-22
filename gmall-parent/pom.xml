@@ -29,6 +29,13 @@
         <jest.version>5.3.3</jest.version>
         <jna.version>4.5.1</jna.version>
         <beanUtils.version>1.9.3</beanUtils.version>
+
+
+        <appache.dubbo-starter.version>2.7.3</appache.dubbo-starter.version>
+        <dubbo-version1>2.7.3</dubbo-version1>
+        <curator-framework.version>4.0.1</curator-framework.version>
+        <curator.recipes.version>2.8.0</curator.recipes.version>
+        <zookeeper.version>3.4.13</zookeeper.version>
     </properties>
     <parent>
         <groupId>org.springframework.boot</groupId>
@@ -139,6 +146,39 @@
                 <artifactId>commons-beanutils</artifactId>
                 <version>${beanUtils.version}</version>
             </dependency>
+
+
+
+            <dependency>
+                <groupId>org.apache.dubbo</groupId>
+                <artifactId>dubbo-spring-boot-starter</artifactId>
+                <version>${appache.dubbo-starter.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.apache.dubbo</groupId>
+                <artifactId>dubbo</artifactId>
+                <version>${dubbo-version1}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.apache.curator</groupId>
+                <artifactId>curator-framework</artifactId>
+                <version>${curator-framework.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.apache.curator</groupId>
+                <artifactId>curator-recipes</artifactId>
+                <version>${curator.recipes.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.apache.zookeeper</groupId>
+                <artifactId>zookeeper</artifactId>
+                <version>${zookeeper.version}</version>
+            </dependency>
+
         </dependencies>
     </dependencyManagement>
 </project>
