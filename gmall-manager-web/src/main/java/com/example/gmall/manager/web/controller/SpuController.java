@@ -4,6 +4,7 @@ package com.example.gmall.manager.web.controller;
 import com.example.gmall.bean.PmsProductImage;
 import com.example.gmall.bean.PmsProductInfo;
 import com.example.gmall.bean.PmsProductSaleAttr;
+import com.example.gmall.manager.web.util.PmsUploadUtil;
 import com.example.gmall.service.SpuService;
 import org.apache.dubbo.config.annotation.Reference;
 import org.springframework.stereotype.Controller;
@@ -38,15 +39,15 @@ public class SpuController {
 
 
 
-//    @RequestMapping("fileUpload")
-//    @ResponseBody
-//    public String fileUpload(@RequestParam("file") MultipartFile multipartFile){
-//        // 将图片或者音视频上传到分布式的文件存储系统
-//        // 将图片的存储路径返回给页面
-//        String imgUrl = PmsUploadUtil.uploadImage(multipartFile);
-//        System.out.println(imgUrl);
-//        return imgUrl;
-//    }
+    @RequestMapping("fileUpload")
+    @ResponseBody
+    public String fileUpload(@RequestParam("file") MultipartFile multipartFile){
+        // 将图片或者音视频上传到分布式的文件存储系统
+        // 将图片的存储路径返回给页面
+        String imgUrl = PmsUploadUtil.uploadImage(multipartFile);
+        System.out.println(imgUrl);
+        return imgUrl;
+    }
 
     @RequestMapping("saveSpuInfo")
     @ResponseBody
