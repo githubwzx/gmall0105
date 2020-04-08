@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.gmall.manager.service.mapper.PmsSkuInfoMapper">
+
+    <select id="selectSkuSaleAttrValueListBySpu" resultMap="selectSkuSaleAttrValueListBySpuMap">
+        SELECT
+            si.id as si_id,
+            si.product_id,
+            si.price,
+            si.sku_name,
+            si.weight,
+            si.sku_desc,
+            si.catalog3_id,
+            si.sku_default_img,
+            ssav.id as ssav_id,
+            ssav.sku_id,
+            ssav.sale_attr_id,
+            ssav.sale_attr_value_id,
+            ssav.sale_attr_name,
+            ssav.sale_attr_value_name
+        FROM
+            pms_sku_info si,
+            pms_sku_sale_attr_value ssav
+        WHERE
+            si.product_id = #{productId}
+        AND si.id = ssav.sku_id
+    </select>
+
+    <resultMap id="selectSkuSaleAttrValueListBySpuMap" type="com.example.gmall.bean.PmsSkuInfo" autoMapping="true">
+        <result column="si_id" property="id"></result>
+        <result column="product_id" property="productId"></result>
+        <result column="price" property="price"></result>
+        <result column="sku_name" property="skuName"></result>
+        <result column="weight" property="weight"></result>
+        <result column="sku_desc" property="skuDesc"></result>
+        <result column="catalog3_id" property="catalog3Id"></result>
+        <result column="sku_default_img" property="skuDefaultImg"></result>
+        <collection property="skuSaleAttrValueList"  ofType="com.example.gmall.bean.PmsSkuSaleAttrValue">
+            <result column="si_id" property="id"></result>
+            <result column="sku_id" property="skuId"></result>
+            <result column="sale_attr_id" property="saleAttrId"></result>
+            <result column="sale_attr_value_id" property="saleAttrValueId"></result>
+            <result column="sale_attr_name" property="saleAttrName"></result>
+            <result column="sale_attr_value_name" property="saleAttrValueName"></result>
+        </collection>
+    </resultMap>
+
+</mapper>
