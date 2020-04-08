@@ -82,6 +82,7 @@ public class SkuServiceImpl implements SkuService {
         pmsSkuImage.setSkuId(skuId);
         List<PmsSkuImage> pmsSkuImages = pmsSkuImageMapper.select(pmsSkuImage);
         skuInfo.setSkuImageList(pmsSkuImages);
+
         return skuInfo;
     }
 
@@ -124,6 +125,8 @@ public class SkuServiceImpl implements SkuService {
         }
         jedis.close();
         return pmsSkuInfo;*/
+
+
         return null;
     }
 
