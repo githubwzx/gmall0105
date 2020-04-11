@@ -11,6 +11,7 @@ import com.example.gmall.manager.service.mapper.PmsSkuImageMapper;
 import com.example.gmall.manager.service.mapper.PmsSkuInfoMapper;
 import com.example.gmall.manager.service.mapper.PmsSkuSaleAttrValueMapper;
 import com.example.gmall.service.SkuService;
+import com.example.gmall.util.RedisUtil;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.dubbo.config.annotation.Service;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,7 +19,9 @@ import org.springframework.context.annotation.Configuration;
 import redis.clients.jedis.Jedis;
 import tk.mybatis.mapper.entity.Example;
 
+import java.util.Collections;
 import java.util.List;
+import java.util.UUID;
 
 @Service
 public class SkuServiceImpl implements SkuService {
@@ -35,8 +38,8 @@ public class SkuServiceImpl implements SkuService {
     @Autowired
     PmsSkuImageMapper pmsSkuImageMapper;
 
-//    @Autowired
-//    RedisUtil redisUtil;
+    @Autowired
+    RedisUtil redisUtil;
 
 
     @Override
@@ -87,24 +90,34 @@ public class SkuServiceImpl implements SkuService {
     }
 
     @Override
-    public PmsSkuInfo getSkuById(String skuId) {
-        /*PmsSkuInfo pmsSkuInfo = new PmsSkuInfo();
+    public PmsSkuInfo getSkuById(String skuId,String ip)  {
+
+        System.out.println("ip为"+ip+"的同学:"+Thread.currentThread().getName()+"进入的商品详情的请求");
+
+        PmsSkuInfo pmsSkuInfo = new PmsSkuInfo();
         // 链接缓存
         Jedis jedis = redisUtil.getJedis();
+
         // 查询缓存
         String skuKey = "sku:"+skuId+":info";
         String skuJson = jedis.get(skuKey);
 
         if(StringUtils.isNotBlank(skuJson)){//if(skuJson!=null&&!skuJson.equals(""))
+            System.out.println("ip为"+ip+"的同学:"+Thread.currentThread().getName()+"从缓存中获取商品详情");
             pmsSkuInfo = JSON.parseObject(skuJson, PmsSkuInfo.class);
         }else{
             // 如果缓存中没有，查询mysql
 
-            // 设置分布式锁
-            String OK = jedis.set("sku:" + skuId + ":lock", "1", "nx", "px", 10);
-            if(StringUtils.isNotBlank(OK)&&OK.equals("OK")){
+            // 设置分布式锁  key 失效，大量请求访问db
+            System.out.println("ip为"+ip+"的同学:"+Thread.currentThread().getName()+"发现缓存中没有，申请缓存的分布式锁："+"sku:" + skuId + ":lock");
+            String token = UUID.randomUUID().toString();
+            String lock = jedis.set("sku:" + skuId + ":lock", token, "nx", "px", 1000*10);
+            if(StringUtils.isNotBlank(lock)&&lock.equals("OK")){
                 // 设置成功，有权在10秒的过期时间内访问数据库
                 pmsSkuInfo =  getSkuByIdFromDb(skuId);
+
+//                Thread.sleep(1000*5);
+
                 if(pmsSkuInfo!=null){
                     // mysql查询结果存入redis
                     jedis.set("sku:"+skuId+":info",JSON.toJSONString(pmsSkuInfo));
@@ -113,21 +126,25 @@ public class SkuServiceImpl implements SkuService {
                     // 为了防止缓存穿透将，null或者空字符串值设置给redis
                     jedis.setex("sku:"+skuId+":info",60*3,JSON.toJSONString(""));
                 }
+                //在访问MySQL后，将分布式锁释放
+               //可与用lua脚本，在查询到key的同时删除该key(将分布式锁释放)，防止高并发下的意外的发生
+                String script ="if redis.call('get', KEYS[1]) == ARGV[1] then return redis.call('del', KEYS[1]) else return 0 end";
+                Object result=jedis.eval(script, Collections.singletonList("sku:" + skuId + ":lock"),Collections.singletonList(token));
+                    System.out.println("ip为"+ip+"的同学:"+Thread.currentThread().getName()+"使用完毕，将锁归还："+"sku:" + skuId + ":lock");
             }else{
                 // 设置失败，自旋（该线程在睡眠几秒后，重新尝试访问本方法）
                 try {
+                    System.out.println("ip为"+ip+"的同学:"+Thread.currentThread().getName()+"没有拿到锁，开始自旋");
                     Thread.sleep(3000);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
-                return getSkuById(skuId);
+                return getSkuById(skuId,ip);
             }
         }
         jedis.close();
-        return pmsSkuInfo;*/
+        return pmsSkuInfo;
 
-
-        return null;
     }
 
     @Override
@@ -136,5 +153,10 @@ public class SkuServiceImpl implements SkuService {
         List<PmsSkuInfo> pmsSkuInfos = pmsSkuInfoMapper.selectSkuSaleAttrValueListBySpu(productId);
 
         return pmsSkuInfos;
+    }
+
+    @Override
+    public List<PmsSkuInfo> getAllSku(String catalog3Id) {
+        return null;
     }
 }

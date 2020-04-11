@@ -8,8 +8,8 @@
     <artifactId>gmall-api</artifactId>
     <version>1.0-SNAPSHOT</version>
 
-<dependencies>
-       <!--通用mapper-->
+    <dependencies>
+        <!--通用mapper-->
         <dependency>
             <groupId>tk.mybatis</groupId>
             <artifactId>mapper-spring-boot-starter</artifactId>
@@ -21,5 +21,5 @@
                 </exclusion>
             </exclusions>
         </dependency>
-</dependencies>
+    </dependencies>
 </project>

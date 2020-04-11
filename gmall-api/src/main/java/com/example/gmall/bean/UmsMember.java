@@ -6,7 +6,7 @@ import javax.persistence.Id;
 import java.io.Serializable;
 import java.util.Date;
 
-public class UmsMember implements Serializable {
+public class UmsMember implements Serializable{
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
